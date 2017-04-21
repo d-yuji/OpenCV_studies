@@ -6,8 +6,11 @@ using namespace cv;
  
 #define NO_GAP
  
-int main (int argc, char **argv){
-const int w=1025, h=978; 
+int
+main (int argc, char **argv)
+{
+	const int w=300, h=200;
+ 
 	// (1)create an image with specified size
 #ifdef NO_GAP
 	Mat img = Mat::zeros(Size(w,h), CV_8UC3);
