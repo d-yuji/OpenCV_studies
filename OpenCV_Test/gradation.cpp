@@ -1,15 +1,16 @@
 #include <cv.h>
 #include <highgui.h>
 #include <iostream>
- 
+#include <cmath>
+#include <cstdio>
 using namespace cv;
  
 #define NO_GAP
  
-int
-main (int argc, char **argv)
-{
-	const int w=300, h=200;
+void hexagon(int x,int y,double l,double angle,Mat hsv_img);
+
+int main (int argc, char **argv){
+	const int w=1000, h=500;
  
 	// (1)create an image with specified size
 #ifdef NO_GAP
@@ -122,7 +123,8 @@ main (int argc, char **argv)
 	std::cout << (getTickCount()-c)/f << "\t";
 #endif
 	std::cout << std::endl;
-	 
+
+	hexagon(0.5*w,0.5*h,60.0,0,hsv_img);
 	// (3)show created gradation image
 	cvtColor(hsv_img, img, CV_HSV2BGR);
 	namedWindow("Garadation", CV_WINDOW_AUTOSIZE);
@@ -130,4 +132,26 @@ main (int argc, char **argv)
 	waitKey(0);
 	 
 	return 0;
+}
+
+void hexagon(int x,int y,double l,double angle,Mat hsv_img){
+	int npt[] = {6};
+	Point pt1[1][6];
+	const Point *ppt[1] = {pt1[0]};
+	double yl = 1/sqrt(2.0)*l;
+	printf("%lf\n",yl);
+
+	pt1[0][0] = Point(x + l,y);
+	pt1[0][1] = Point(x + (0.5*l),y + yl);
+	pt1[0][2] = Point(x - (0.5*l),y + yl);
+	pt1[0][3] = Point(x - l,y);
+	pt1[0][4] = Point(x - (0.5*l),y - yl);
+	pt1[0][5] = Point(x + (0.5*l),y - yl);
+
+	for(int i =0;i<6;i++){
+		printf("%d %d\n",pt1[0][i].x,pt1[0][i].y);
+	}
+	polylines(hsv_img, ppt, npt, 3, true, Scalar(0,0,200), 1, CV_AA,0);
+
+	return;
 }
