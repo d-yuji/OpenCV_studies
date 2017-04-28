@@ -8,12 +8,13 @@ using namespace cv;
 #define _USE_MATH_DEFINES 
 #define NO_GAP
 
+//OpenCV関数を使ったもの
 // void hexagon(int x,int y,double l,double angle,Mat hsv_img);
-bool hexagon(double x,double y,int l,int lx,int ly);
+
+bool hexagon(int x,int y,int l,int cx,int cy);
 
 int main (int argc, char **argv){
 	const int w = 500, h = 500;
-
 
 #ifdef NO_GAP
 	Mat img = Mat::zeros(Size(w,h), CV_8UC3);
@@ -25,15 +26,16 @@ int main (int argc, char **argv){
 	Rect roi_rect(0,0,w,h);
 	Mat hsv_img(img, roi_rect);
 #endif
+
 	int ch = img.channels();
 	int width = hsv_img.cols;
 	int height = hsv_img.rows;
 
-
 	for(int y = 0; y < height; ++y){
 		for(int x = 0; x < width; ++x){
 			int a = hsv_img.step*y+(x*ch);
-			if(hexagon((double)x,(double)y,200,w/2,h/2)){
+
+			if( hexagon(x,y,200,w/2,h/2) ){
 				hsv_img.data[a+0] = 105;
 				hsv_img.data[a+1] = 255;
 				hsv_img.data[a+2] = 255;
@@ -42,12 +44,26 @@ int main (int argc, char **argv){
 	}
 	//	hexagon(0.5*w,0.5*h,200.0,40.0,hsv_img);
 	cvtColor(hsv_img, img, CV_HSV2BGR);
-	namedWindow("Garadation", CV_WINDOW_AUTOSIZE);
-	imshow("Gradation", img);
+	namedWindow("Hexagon", CV_WINDOW_AUTOSIZE);
+	imshow("Hexagon", img);
 	waitKey(0);
 	 
 	return 0;
 }
+
+bool hexagon(int x,int y,int l,int cx,int cy){
+	double root3 = sqrt(3);
+	double area = 2*root3*l;
+
+	double check = (2*fabs(y-cy)) + fabs((root3*(x-cx))-(y-cy)) + fabs((root3*(x-cx))+(y-cy));
+
+	if(area > check){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 
 /*
 void hexagon(int x,int y,double l,double ang,Mat hsv_img){
@@ -72,15 +88,3 @@ void hexagon(int x,int y,double l,double ang,Mat hsv_img){
 
 	return;
 }*/
-bool hexagon(double x,double y,int l,int lx,int ly){
-	double root3 = sqrt(3);
-	double area = 2*root3*l;
-
-	double check = (2*fabs(y-ly)) + fabs((root3*(x-lx))-(y-ly)) + fabs((root3*(x-lx))+(y-ly));
-
-	if(area > check){
-		return true;
-	}else{
-		return false;
-	}
-}
